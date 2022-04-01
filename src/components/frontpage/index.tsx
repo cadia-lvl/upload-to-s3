@@ -88,11 +88,15 @@ class FrontPage extends React.Component<Props, State> {
                                 placeholder={'Hlaðvarp nafn'}
                                 onChange={this.onPodcastChange}
                             />
+                            <Form.Group controlId="formFileMultiple" className="mb-3">
+                              <Form.Label>Multiple files input example</Form.Label>
+                              <Form.Control type="file" multiple />
+                            </Form.Group>
                             <Form.Group controlId="formFileLg" className="mb-3">
                               <Form.Label>Large file input example</Form.Label>
                               <Form.Control type="file" size="lg" />
                             </Form.Group>
-                            <SubmitButton>Open</SubmitButton>
+                            <SubmitButton>Upload</SubmitButton>
                     </Form>
                 </FrontPageContainer>
             </Layout>
