@@ -45,7 +45,7 @@ export const Layout: React.FunctionComponent<Props> = ({ children }) => {
                 <Header>
                     <Title>
                         <StyledLink href="/">
-                            Project name
+                            LVL Data Uploader
                         </StyledLink>
                     </Title>
                 </Header>
