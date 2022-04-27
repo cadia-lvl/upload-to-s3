@@ -5,6 +5,9 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import TextInput from '../ui/input/text-input';
 import Layout from '../ui/layout';
 import Form from 'react-bootstrap/Form';
+import Spinner from 'react-bootstrap/Spinner';
+
+import * as api from '../../services/api';
 
 const FrontPageContainer = styled.div`
     display: flex;
@@ -45,6 +48,7 @@ type Props = RouteComponentProps;
 
 interface State {
     podcastType: string;
+    selectedFile: null;
 }
 
 class FrontPage extends React.Component<Props, State> {
@@ -55,6 +59,7 @@ class FrontPage extends React.Component<Props, State> {
         this.state = {
             // today: +new Date(),
             podcastType: '',
+            selectedFile: null,
         };
     }
 
@@ -62,6 +67,36 @@ class FrontPage extends React.Component<Props, State> {
         const podcastType = e.currentTarget.value;
         this.setState({ podcastType });
     };
+
+    // Thank you https://www.geeksforgeeks.org/file-uploading-in-react-js/
+    // for the filechange function
+    // TODO: loop over all the files uploaded
+    onFileChange = (event: any) => {
+        
+        this.setState( { selectedFile: event.target.files[0] });
+    };
+
+    verifyFormData = () => {
+    }
+
+    onFileUpload = async () => {
+        console.log('sending the file now');
+        console.log(this.state.selectedFile);
+        // TODO: verify formData;
+        const showId = 'some podcast name';
+        const rssFeed = 'https://url.html';
+        this.verifyFormData();
+        if (this.state.selectedFile != null) {
+            await api.uploadFile(this.state.selectedFile, showId, rssFeed);
+            // TODO: show the list of filenames uploaded
+            // Also say takk!
+            // TODO: use serverless aws to send to aws s3
+        }
+        // else say there was nothing to submit
+    };
+
+    // TODO: Display the filenames uploaded
+    // TODO: only show the button if files have been attached
 
     handleJoin = (event: React.MouseEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -81,7 +116,7 @@ class FrontPage extends React.Component<Props, State> {
                             different file types.
                         </p>
                     </WelcomeTextContainer>
-                    <Form>
+                    <Form onSubmit={this.onFileUpload}>
                             <UrlInput
                                 label={'Podcast'}
                                 value={this.state.podcastType}
@@ -94,9 +129,16 @@ class FrontPage extends React.Component<Props, State> {
                             </Form.Group>
                             <Form.Group controlId="formFileLg" className="mb-3">
                               <Form.Label>Large file input example</Form.Label>
-                              <Form.Control type="file" size="lg" />
+                              <Form.Control
+                                    type={'file'}
+                                    size={'lg'}
+                                    onChange={this.onFileChange}
+                              />
                             </Form.Group>
                             <SubmitButton>Upload</SubmitButton>
+                            <Spinner animation="border" role="status">
+                              <span className="visually-hidden">Loading...</span>
+                            </Spinner>
                     </Form>
                 </FrontPageContainer>
             </Layout>
