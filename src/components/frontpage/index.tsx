@@ -72,14 +72,15 @@ class FrontPage extends React.Component<Props, State> {
     // for the filechange function
     // TODO: loop over all the files uploaded
     onFileChange = (event: any) => {
-        
+
         this.setState( { selectedFile: event.target.files[0] });
     };
 
     verifyFormData = () => {
     }
 
-    onFileUpload = async () => {
+    onFileUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         console.log('sending the file now');
         console.log(this.state.selectedFile);
         // TODO: verify formData;
@@ -135,7 +136,9 @@ class FrontPage extends React.Component<Props, State> {
                                     onChange={this.onFileChange}
                               />
                             </Form.Group>
-                            <SubmitButton>Upload</SubmitButton>
+                            <SubmitButton
+                                type="submit"
+                                >Upload</SubmitButton>
                             <Spinner animation="border" role="status">
                               <span className="visually-hidden">Loading...</span>
                             </Spinner>
