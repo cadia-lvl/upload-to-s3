@@ -48,7 +48,7 @@ type Props = RouteComponentProps;
 
 interface State {
     podcastType: string;
-    selectedFile: null;
+    selectedFiles: File[];
 }
 
 class FrontPage extends React.Component<Props, State> {
@@ -59,7 +59,7 @@ class FrontPage extends React.Component<Props, State> {
         this.state = {
             // today: +new Date(),
             podcastType: '',
-            selectedFile: null,
+            selectedFiles: [],
         };
     }
 
@@ -72,8 +72,7 @@ class FrontPage extends React.Component<Props, State> {
     // for the filechange function
     // TODO: loop over all the files uploaded
     onFileChange = (event: any) => {
-
-        this.setState( { selectedFile: event.target.files[0] });
+        this.setState( { selectedFiles: event.target.files });
     };
 
     verifyFormData = () => {
@@ -82,13 +81,15 @@ class FrontPage extends React.Component<Props, State> {
     onFileUpload = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('sending the file now');
-        console.log(this.state.selectedFile);
         // TODO: verify formData;
         const showId = 'some podcast name';
         const rssFeed = 'https://url.html';
         this.verifyFormData();
-        if (this.state.selectedFile != null) {
-            await api.uploadFile(this.state.selectedFile, showId, rssFeed);
+        if (this.state.selectedFiles != null) {
+            console.log(this.state.selectedFiles);
+            for (let i = 0; i < this.state.selectedFiles.length; i++) {
+                await api.uploadFile(this.state.selectedFiles[i], showId, rssFeed);
+            }
             // TODO: show the list of filenames uploaded
             // Also say takk!
             // TODO: use serverless aws to send to aws s3
@@ -126,8 +127,13 @@ class FrontPage extends React.Component<Props, State> {
                             />
                             <Form.Group controlId="formFileMultiple" className="mb-3">
                               <Form.Label>Multiple files input example</Form.Label>
-                              <Form.Control type="file" multiple />
+                              <Form.Control
+                                    type={'file'}
+                                    onChange={this.onFileChange}
+                                    multiple />
                             </Form.Group>
+                            {/* might be useful for if people upload all the
+                                data as an archive
                             <Form.Group controlId="formFileLg" className="mb-3">
                               <Form.Label>Large file input example</Form.Label>
                               <Form.Control
@@ -136,6 +142,7 @@ class FrontPage extends React.Component<Props, State> {
                                     onChange={this.onFileChange}
                               />
                             </Form.Group>
+                            */}
                             <SubmitButton
                                 type="submit"
                                 >Upload</SubmitButton>
