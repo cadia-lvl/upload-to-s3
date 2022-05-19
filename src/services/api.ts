@@ -31,8 +31,8 @@ export const uploadFile = async (
     const id = file.name; // || uuid(); Generate new id as fallback from the uuid library
 
     const formData: FormData = new FormData();
-    formData.append('textfile', file, 'randomName');
-    formData.append('metadata', metadata);
+    formData.append('script', file, 'randomName');
+    //formData.append('metadata', metadata);
 
     return axios({
         method: 'POST',
