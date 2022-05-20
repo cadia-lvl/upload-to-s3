@@ -4,8 +4,8 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 // rest?
 export const uploadFile = async (
     file: File,
-    rssFeed: string,
     show: string,
+    rssFeed: string,
     // clip: AudioInfo,
     // demographics: UserDemographics
 ): Promise<void> => {
@@ -32,7 +32,7 @@ export const uploadFile = async (
 
     const formData: FormData = new FormData();
     formData.append('script', file, 'randomName');
-    //formData.append('metadata', metadata);
+    formData.append('metadata', metadata);
 
     return axios({
         method: 'POST',
