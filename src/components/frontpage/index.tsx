@@ -70,7 +70,6 @@ class FrontPage extends React.Component<Props, State> {
 
     // Thank you https://www.geeksforgeeks.org/file-uploading-in-react-js/
     // for the filechange function
-    // TODO: loop over all the files uploaded
     onFileChange = (event: any) => {
         this.setState( { selectedFiles: event.target.files });
     };
@@ -88,7 +87,12 @@ class FrontPage extends React.Component<Props, State> {
         if (this.state.selectedFiles != null) {
             console.log(this.state.selectedFiles);
             for (let i = 0; i < this.state.selectedFiles.length; i++) {
-                await api.uploadFile(this.state.selectedFiles[i], showId, rssFeed);
+                try {
+                    await api.uploadFile(this.state.selectedFiles[i], showId, rssFeed);
+                } catch(e) {
+                    console.log('Error: Did not upload ' + this.state.selectedFiles[i]);
+                    console.error(e);
+                }
             }
             // TODO: show the list of filenames uploaded
             // Also say takk!
