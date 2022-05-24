@@ -55,17 +55,25 @@ class FrontPage extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        const podcastType = new
+            URLSearchParams(this.props.location.search).get("showId");
         // autogenerate a chatroom name from the timestamp
         this.state = {
             // today: +new Date(),
-            podcastType: '',
+            podcastType: (podcastType != null)? podcastType : '',
             selectedFiles: [],
         };
     }
 
     onPodcastChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { history } = this.props;
         const podcastType = e.currentTarget.value;
         this.setState({ podcastType });
+        if (podcastType.length === 0) {
+            history.push(`/`);
+        } else {
+            history.push(`/?showId=${podcastType}`);
+        }
     };
 
     // Thank you https://www.geeksforgeeks.org/file-uploading-in-react-js/
@@ -84,7 +92,7 @@ class FrontPage extends React.Component<Props, State> {
         const podcastId = this.state.podcastType;
         const rssFeed = 'https://url.html';
         this.verifyFormData();
-        if (this.state.selectedFiles != null) {
+        if (this.state.selectedFiles != null && podcastId != null) {
             console.log(this.state.selectedFiles);
             for (let i = 0; i < this.state.selectedFiles.length; i++) {
                 try {
@@ -108,7 +116,11 @@ class FrontPage extends React.Component<Props, State> {
         event.preventDefault();
         const { history } = this.props;
         const { podcastType } = this.state;
-        history.push(`/${podcastType}`);
+        if (podcastType.length === 0) {
+            history.push(`/`);
+        } else {
+            history.push(`/?showId=${podcastType}`);
+        }
     };
 
     render() {
