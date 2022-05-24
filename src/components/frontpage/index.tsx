@@ -141,6 +141,7 @@ class FrontPage extends React.Component<Props, State> {
                                 value={this.state.podcastType}
                                 placeholder={'Hlaðvarp nafn'}
                                 onChange={this.onPodcastChange}
+                                disabled
                             />
                             <Form.Group controlId="formFileMultiple" className="mb-3">
                               <Form.Label>Multiple files input example</Form.Label>
