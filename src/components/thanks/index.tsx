@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import Layout from '../ui/layout';
 
-const AboutContainer = styled.div`
+const ThanksContainer = styled.div`
     width: 100%;
     max-width: 40rem;
     display: flex;
@@ -34,7 +34,7 @@ interface State {}
 
 type Props = RouteComponentProps;
 
-class About extends React.Component<Props, State> {
+class Thanks extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -49,19 +49,13 @@ class About extends React.Component<Props, State> {
     render() {
         return (
             <Layout>
-                <AboutContainer>
-                    <h2>Exercise training</h2>
-                    <Button onClick={this.handleClick}>Back home</Button>
-                    <p>
-                       Exercise training is about tracking ones exercise over a
-                       long period. This can be over a week, a month, months,
-                       or over a year to check
-                       on progress.
-                    </p>
-                </AboutContainer>
+                <ThanksContainer>
+                    <h2>Takk fyfir að taka þátt!</h2>
+                    <Button onClick={this.handleClick}>Aftur á forsíðu</Button>
+                </ThanksContainer>
             </Layout>
         );
     }
 }
 
-export default withRouter(About);
+export default withRouter(Thanks);
