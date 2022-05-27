@@ -45,7 +45,7 @@ export const Layout: React.FunctionComponent<Props> = ({ children }) => {
                 <Header>
                     <Title>
                         <StyledLink href="/">
-                            LVL Data Uploader
+                            Podrómur
                         </StyledLink>
                     </Title>
                 </Header>
