@@ -57,6 +57,7 @@ type Props = RouteComponentProps;
 interface State {
     podcastType: string;
     selectedFiles: File[];
+    processing: boolean;
 }
 
 class FrontPage extends React.Component<Props, State> {
@@ -70,6 +71,7 @@ class FrontPage extends React.Component<Props, State> {
             // today: +new Date(),
             podcastType: (podcastType != null)? podcastType : '',
             selectedFiles: [],
+            processing: false,
         };
     }
 
@@ -94,6 +96,8 @@ class FrontPage extends React.Component<Props, State> {
     }
 
     onFileUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+        let processing = true;
+        this.setState( { processing } );
         e.preventDefault();
         console.log('sending the file now');
         // TODO: verify formData;
@@ -111,10 +115,13 @@ class FrontPage extends React.Component<Props, State> {
                 }
             }
             // TODO: show the list of filenames uploaded
-            // Also say takk!
-            // TODO: use serverless aws to send to aws s3
         }
-        // else say there was nothing to submit
+        // TODO: else say there was nothing to submit or it errored out
+        processing = false;
+        this.setState( { processing } );
+        // Also say thanks
+        const { history } = this.props;
+        history.push(`/takk`);
     };
 
     // TODO: Display the filenames uploaded
@@ -132,8 +139,7 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     render() {
-        const { podcastType, selectedFiles } = this.state;
-        console.log(podcastType);
+        const { podcastType, selectedFiles, processing } = this.state;
         return (
             <Layout>
                 <FrontPageContainer>
@@ -169,15 +175,17 @@ class FrontPage extends React.Component<Props, State> {
                               />
                             </Form.Group>
                             */}
+                            <Spinner
+                                animation={'border'}
+                                role={'status'}
+                                hidden={!processing}
+                            >
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
                             <SubmitButton
                                 type="submit"
-                                disabled={ !podcastType || selectedFiles.length === 0 }
+                                disabled={ !podcastType || selectedFiles.length === 0 || processing }
                                 >Upload</SubmitButton>
-                            {/* TODO: add spinner when uploading files
-                            <Spinner animation="border" role="status">
-                              <span className="visually-hidden">Loading...</span>
-                            </Spinner>
-                            */}
                     </Form>
                 </FrontPageContainer>
             </Layout>
