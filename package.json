@@ -2,7 +2,7 @@
   "name": "upload-to-s3",
   "version": "1.0.0",
   "description": "Form to upload files to server and aws s3 bucket",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "scripts": {
     "build": "concurrently -p \"[{name}]\" -n \"BE,FE\" -c \"bgBlue.bold,bgMagenta.bold\" \"cd backend && npm run build\" \"cd frontend && npm run build\"",
     "build:backend": "cd backend && npm run build",
