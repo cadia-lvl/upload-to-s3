@@ -23,13 +23,21 @@ const SubmitButton = styled.button`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #60c197;
-    border: none;
     color: white;
-    cursor: pointer;
     font-size: 2rem;
     height: 3.5rem;
     margin: 1rem 0rem;
+    border: 1px solid ${({ disabled }) => (disabled ? 'gray' : '#60C197')};
+
+    border-radius: 0.1rem;
+
+    background-color: ${({ disabled }) => (disabled ? 'gray' : '#60C197')};
+
+    cursor: ${({ disabled }) => (disabled ? 'initial' : 'pointer')};
+    &:active {
+        transform: ${({ disabled }) => `translateY(${disabled ? 0 : 2}px)`};
+        outline: none;
+    }
 
     :active {
         transform: translateY(2px);
@@ -124,11 +132,13 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     render() {
+        const { podcastType, selectedFiles } = this.state;
+        console.log(podcastType);
         return (
             <Layout>
                 <FrontPageContainer>
                     <WelcomeTextContainer>
-                        <h3>Welcome to the Podromur collection</h3>
+                        <h3>Velkomin</h3>
                         <p>
                             Vinsamlegast bæta við skjalans hér.
                         </p>
@@ -161,10 +171,13 @@ class FrontPage extends React.Component<Props, State> {
                             */}
                             <SubmitButton
                                 type="submit"
+                                disabled={ !podcastType || selectedFiles.length === 0 }
                                 >Upload</SubmitButton>
+                            {/* TODO: add spinner when uploading files
                             <Spinner animation="border" role="status">
                               <span className="visually-hidden">Loading...</span>
                             </Spinner>
+                            */}
                     </Form>
                 </FrontPageContainer>
             </Layout>
