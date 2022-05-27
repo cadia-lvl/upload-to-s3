@@ -130,9 +130,7 @@ class FrontPage extends React.Component<Props, State> {
                     <WelcomeTextContainer>
                         <h3>Welcome to the Podromur collection</h3>
                         <p>
-                            You can upload your podcast scripts here. We accept
-                            many different file types. If there is a problem,
-                            please email judyfong@ru.is.
+                            Vinsamlegast bæta við skjalans hér.
                         </p>
                     </WelcomeTextContainer>
                     <Form onSubmit={this.onFileUpload}>
