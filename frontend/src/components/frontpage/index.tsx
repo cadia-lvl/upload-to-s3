@@ -154,16 +154,16 @@ class FrontPage extends React.Component<Props, State> {
             <Layout>
                 <FrontPageContainer>
                     <WelcomeTextContainer>
-                        <h3>Velkomin</h3>
+                        <h3>Velkomin/n</h3>
                         <p>
-                            Vinsamlegast bæta við skjalans hér.
+                            Vinsamlegast bættu við skjölum hér.
                         </p>
                     </WelcomeTextContainer>
                     <Form onSubmit={this.onFileUpload}>
                             <NameInput
-                                label={'Podcast'}
+                                label={'Hlaðvarp'}
                                 value={this.state.podcastType}
-                                placeholder={'Hlaðvarp nafn'}
+                                placeholder={'Nafn hlaðvarps'}
                                 onChange={this.onPodcastChange}
                                 disabled
                             />
@@ -174,7 +174,7 @@ class FrontPage extends React.Component<Props, State> {
                                 onChange={this.onFeedChange}
                             />
                             <Form.Group controlId="formFileMultiple" className="mb-3">
-                              <Form.Label>Multiple files input example</Form.Label>
+                              <Form.Label>Veldu handrit til að hlaða upp (textaskrár á sniði: .txt, .ppt, .rtf, .docx o.s.frv.)</Form.Label>
                               <Form.Control
                                     type={'file'}
                                     onChange={this.onFileChange}
@@ -205,7 +205,7 @@ class FrontPage extends React.Component<Props, State> {
                                            processing ||
                                            !rssFeed
                                          }
-                                >Upload</SubmitButton>
+                                >Hlaða upp</SubmitButton>
                     </Form>
                 </FrontPageContainer>
             </Layout>
