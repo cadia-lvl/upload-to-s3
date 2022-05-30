@@ -102,7 +102,7 @@ class FrontPage extends React.Component<Props, State> {
         console.log('sending the file now');
         // TODO: verify formData;
         const podcastId = this.state.podcastType;
-        const rssFeed = 'https://url.html';
+        const rssFeed = 'https://hlekkurinn.is';
         this.verifyFormData();
         if (this.state.selectedFiles != null && podcastId != null) {
             console.log(this.state.selectedFiles);

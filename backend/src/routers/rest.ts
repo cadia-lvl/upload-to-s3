@@ -21,11 +21,10 @@ const createRestRouter = (isProduction: boolean) => {
             const id = decodeURIComponent(req.headers.id as string);
             const show = decodeURIComponent(req.headers.show as string);
             if (file.fieldname == 'script') {
-                //TODO: don't assume .txt
                 cb(null, id);
                 console.log('uploading file: ' + id);
             } else if (file.fieldname == 'metadata') {
-                cb(null, show + '.json');
+                cb(null, 'metadata-' + id + '.json');
             }
         },
     });
