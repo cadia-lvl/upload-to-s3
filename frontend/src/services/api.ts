@@ -20,7 +20,7 @@ export const uploadFile = async (
     const jsonString = JSON.stringify({
         show_id: show,
         audio_feed: rssFeed,
-        file_type: file.type,
+        file_name: file.name,
     });
 
     const metadata = new Blob([jsonString], {
