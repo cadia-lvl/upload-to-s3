@@ -48,7 +48,11 @@ const SubmitButton = styled.button`
     }
 `;
 
-const UrlInput = styled(TextInput)``;
+const NameInput = styled(TextInput)``;
+
+const UrlInput = styled(TextInput)`
+    margin: 1rem 0rem;
+`;
 
 const WelcomeTextContainer = styled.div``;
 
@@ -56,6 +60,7 @@ type Props = RouteComponentProps;
 
 interface State {
     podcastType: string;
+    rssFeed: string;
     selectedFiles: File[];
     processing: boolean;
 }
@@ -70,10 +75,16 @@ class FrontPage extends React.Component<Props, State> {
         this.state = {
             // today: +new Date(),
             podcastType: (podcastType != null)? podcastType : '',
+            rssFeed: '',
             selectedFiles: [],
             processing: false,
         };
     }
+
+    onFeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rssFeed = e.currentTarget.value;
+        this.setState({ rssFeed });
+    };
 
     onPodcastChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { history } = this.props;
@@ -102,7 +113,7 @@ class FrontPage extends React.Component<Props, State> {
         console.log('sending the file now');
         // TODO: verify formData;
         const podcastId = this.state.podcastType;
-        const rssFeed = 'https://hlekkurinn.is';
+        const rssFeed = this.state.rssFeed;
         this.verifyFormData();
         if (this.state.selectedFiles != null && podcastId != null) {
             console.log(this.state.selectedFiles);
@@ -125,7 +136,6 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     // TODO: Display the filenames uploaded
-    // TODO: only show the button if files have been attached
 
     handleJoin = (event: React.MouseEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -139,7 +149,7 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     render() {
-        const { podcastType, selectedFiles, processing } = this.state;
+        const { podcastType, rssFeed, selectedFiles, processing } = this.state;
         return (
             <Layout>
                 <FrontPageContainer>
@@ -150,12 +160,18 @@ class FrontPage extends React.Component<Props, State> {
                         </p>
                     </WelcomeTextContainer>
                     <Form onSubmit={this.onFileUpload}>
-                            <UrlInput
+                            <NameInput
                                 label={'Podcast'}
                                 value={this.state.podcastType}
                                 placeholder={'Hlaðvarp nafn'}
                                 onChange={this.onPodcastChange}
                                 disabled
+                            />
+                            <UrlInput
+                                label={'RSSFeed'}
+                                value={this.state.rssFeed}
+                                placeholder={'https://hlekkurinn.is'}
+                                onChange={this.onFeedChange}
                             />
                             <Form.Group controlId="formFileMultiple" className="mb-3">
                               <Form.Label>Multiple files input example</Form.Label>
@@ -184,7 +200,11 @@ class FrontPage extends React.Component<Props, State> {
                             </Spinner>
                             <SubmitButton
                                 type="submit"
-                                disabled={ !podcastType || selectedFiles.length === 0 || processing }
+                                disabled={ !podcastType ||
+                                           selectedFiles.length === 0 ||
+                                           processing ||
+                                           !rssFeed
+                                         }
                                 >Upload</SubmitButton>
                     </Form>
                 </FrontPageContainer>
