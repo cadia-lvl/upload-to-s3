@@ -49,7 +49,7 @@ const SubmitButton = styled.button`
 `;
 
 const UploadTypeText = styled.p`
-    margin: 1rem 0rem 0rem 0rem;
+    margin: 0;
 `;
 
 const RadioLabel = styled.label`
@@ -61,6 +61,15 @@ const NameInput = styled(TextInput)``;
 const UrlInput = styled(TextInput)`
     margin: 1rem 0rem;
 `;
+
+const RadioButtonsContainer = styled.div`
+    margin-top: 1rem;
+`;
+
+enum AudioType {
+    RSS = 'rss',
+    AUDIO_FILES = 'audio_files',
+}
 
 const WelcomeTextContainer = styled.div``;
 
@@ -180,11 +189,11 @@ class FrontPage extends React.Component<Props, State> {
 
     handleRadioButton = (value: string) => {
         console.log(value);
-        if (value == 'rss') {
+        if (value == AudioType.RSS) {
             this.setState({ audioFiles: false });
             return;
         }
-        if (value == 'audio_files') {
+        if (value == AudioType.AUDIO_FILES) {
             this.setState({ audioFiles: true });
             return;
         }
@@ -219,14 +228,7 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     render() {
-        const {
-            podcastType,
-            rssFeed,
-            selectedFiles,
-            selectedAudioFiles,
-            processing,
-            audioFiles,
-        } = this.state;
+        const { processing, audioFiles } = this.state;
         return (
             <Layout>
                 <FrontPageContainer>
@@ -242,33 +244,40 @@ class FrontPage extends React.Component<Props, State> {
                             onChange={this.onPodcastChange}
                             disabled
                         />
-                        <UploadTypeText>
-                            Veldu hvernig þú vilt gefa hljóðskrár. RSS hlekkur
-                            eða hlaðið upp hljóðskrár.
-                        </UploadTypeText>
-                        <input
-                            type="radio"
-                            id="rss"
-                            name="audio_type"
-                            value="rss"
-                            onChange={() => this.handleRadioButton('rss')}
-                            checked={!audioFiles}
-                        ></input>
-                        <RadioLabel htmlFor="rss">RSSFeed hlekkur</RadioLabel>
-                        <br />
-                        <input
-                            type="radio"
-                            id="audio_files"
-                            name="audio_type"
-                            value="audio_files"
-                            onChange={() =>
-                                this.handleRadioButton('audio_files')
-                            }
-                        ></input>
-                        <RadioLabel htmlFor="audio_files">
-                            Audio files
-                        </RadioLabel>
-                        <br />
+                        <RadioButtonsContainer>
+                            <UploadTypeText>
+                                Veldu hvernig þú vilt gefa hljóðskrár. RSS
+                                hlekkur eða hlaðið upp hljóðskrár.
+                            </UploadTypeText>
+                            <input
+                                type="radio"
+                                id="rss"
+                                name="audio_type"
+                                value="rss"
+                                onChange={() =>
+                                    this.handleRadioButton(AudioType.RSS)
+                                }
+                                checked={!audioFiles}
+                            ></input>
+                            <RadioLabel htmlFor="rss">
+                                RSSFeed hlekkur
+                            </RadioLabel>
+                            <br />
+                            <input
+                                type="radio"
+                                id="audio_files"
+                                name="audio_type"
+                                value="audio_files"
+                                onChange={() =>
+                                    this.handleRadioButton(
+                                        AudioType.AUDIO_FILES
+                                    )
+                                }
+                            ></input>
+                            <RadioLabel htmlFor="audio_files">
+                                Hljóðskrár
+                            </RadioLabel>
+                        </RadioButtonsContainer>
                         {audioFiles ? (
                             <Form.Group
                                 controlId="formFileMultipleAudio"
