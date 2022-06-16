@@ -13,17 +13,17 @@ repo.
 Please make a pull request or create an issue if you want to contribute.
 
 ### Prerequisites
-* Nodejs version 16+
-* Bootstrap
-* ReactJS
-* AWS S3 bucket config.json
-* ExpressJS
-* Typescript - Superset of JavaScript which primarily provides optional static
-  typing, classes and interfaces.
-* Styled Components - Style components directly using template literals.
+
+-   Nodejs version 16+
+-   Bootstrap
+-   ReactJS
+-   AWS S3 bucket config.json
+-   ExpressJS
+-   Typescript - Superset of JavaScript which primarily provides optional static
+    typing, classes and interfaces.
+-   Styled Components - Style components directly using template literals.
 
 ### Development
-
 
 ```
 npm install
@@ -51,6 +51,7 @@ Run the stuff in production using pm2.
 Reykjavík University
 
 Judy Fong - judy@judyyfong.xyz
+Staffan Hedström - staffanh@ru.is
 
 ## Acknowledgements
 

@@ -41,17 +41,11 @@ class Thanks extends React.Component<Props, State> {
         this.state = {};
     }
 
-    handleClick = () => {
-        const { history } = this.props;
-        history.push('/');
-    };
-
     render() {
         return (
             <Layout>
                 <ThanksContainer>
-                    <h2>Takk fyfir að taka þátt!</h2>
-                    <Button onClick={this.handleClick}>Aftur á forsíðu</Button>
+                    <h2>Takk fyrir að taka þátt!</h2>
                 </ThanksContainer>
             </Layout>
         );
