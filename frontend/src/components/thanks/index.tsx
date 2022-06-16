@@ -45,7 +45,7 @@ class Thanks extends React.Component<Props, State> {
         return (
             <Layout>
                 <ThanksContainer>
-                    <h2>Takk fyfir að taka þátt!</h2>
+                    <h2>Takk fyrir að taka þátt!</h2>
                 </ThanksContainer>
             </Layout>
         );

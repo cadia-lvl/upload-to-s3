@@ -137,7 +137,7 @@ class FrontPage extends React.Component<Props, State> {
         const podcastId = this.state.podcastType;
         const rssFeed = this.state.rssFeed;
         if (files != null && podcastId != null) {
-            console.log(this.state.selectedFiles);
+            console.log(files);
             for (let i = 0; i < files.length; i++) {
                 try {
                     await api.uploadFile(files[i], podcastId, rssFeed);
@@ -157,8 +157,6 @@ class FrontPage extends React.Component<Props, State> {
         e.preventDefault();
         console.log('sending the file now');
         // TODO: verify formData;
-        const podcastId = this.state.podcastType;
-        const rssFeed = this.state.rssFeed;
         this.verifyFormData();
 
         await this.uploadFiles(selectedFiles);
@@ -188,7 +186,6 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     handleRadioButton = (value: string) => {
-        console.log(value);
         if (value == AudioType.RSS) {
             this.setState({ audioFiles: false });
             return;
@@ -212,7 +209,7 @@ class FrontPage extends React.Component<Props, State> {
         // Require podcast type
         if (!podcastType) return true;
 
-        // Don't upload if processing
+        // Don't allow submit if processing
         if (processing) return true;
 
         // Require scripts
