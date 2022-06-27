@@ -5,6 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import TextInput from '../ui/input/text-input';
 import Layout from '../ui/layout';
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 import * as api from '../../services/api';
@@ -67,7 +68,9 @@ const RadioButtonsContainer = styled.div`
     margin-top: 1rem;
 `;
 
-const FilesContainer = styled.div``;
+const FilesContainer = styled.div`
+    max-height: 30rem;
+`;
 
 const FileItem = styled.div`
     display: flex;
@@ -98,6 +101,14 @@ const Remove = styled.button`
 
 const FormGroup = styled(Form.Group)`
     margin-top: 1.5rem;
+`;
+
+const FormControl = styled(Form.Control)`
+    display: none;
+`;
+
+const LargeButton = styled(Button)`
+    width: 20rem;
 `;
 
 const SelectedFilesTitle = styled.div`
@@ -323,11 +334,30 @@ class FrontPage extends React.Component<Props, State> {
                                 Veldu handrit til að hlaða upp (textaskrár á
                                 sniði: .txt, .ppt, .rtf, .docx o.s.frv.)
                             </Form.Label>
-                            <Form.Control
+                            <FormControl
                                 type={'file'}
                                 onChange={this.onFileChange}
                                 multiple
                             />
+                            <div className="d-grid">
+                                <Button
+                                    variant={
+                                        selectedFiles.length > 0
+                                            ? 'success'
+                                            : 'primary'
+                                    }
+                                    size="lg"
+                                    onClick={() =>
+                                        document
+                                            .getElementById('formFileMultiple')
+                                            ?.click()
+                                    }
+                                >
+                                    {selectedFiles.length > 0
+                                        ? 'Velja fleiri skrár'
+                                        : 'Velja skrár'}
+                                </Button>
+                            </div>
                         </FormGroup>
                         {/* might be useful for if people upload all the
                                 data as an archive
@@ -355,22 +385,24 @@ class FrontPage extends React.Component<Props, State> {
                         </SubmitButton>
                     </Form>
                     <FilesContainer>
-                        {selectedFiles && selectedFiles.length > -1 && (
+                        {selectedFiles && selectedFiles.length > 0 && (
                             <SelectedFilesTitle>
                                 <h3>Valdar skrár ({selectedFiles.length})</h3>
-                                <RemoveAllButton
+                                <Button
+                                    variant="danger"
                                     onClick={this.clearAllSelectedFiles}
                                 >
                                     Fjarlægja allar skrár
-                                </RemoveAllButton>
+                                </Button>
                             </SelectedFilesTitle>
                         )}
                         {selectedFiles &&
                             Array.from(selectedFiles).map((file) => {
                                 return (
-                                    <FileItem>
+                                    <FileItem key={file.name}>
                                         <Status>
-                                            <Remove
+                                            <Button
+                                                variant="danger"
                                                 onClick={() =>
                                                     this.removeFileClicked(
                                                         file.name
@@ -379,7 +411,7 @@ class FrontPage extends React.Component<Props, State> {
                                                 title={'Fjarlægja'}
                                             >
                                                 X
-                                            </Remove>
+                                            </Button>
                                         </Status>
                                         <Name>{file.name}</Name>
                                     </FileItem>
