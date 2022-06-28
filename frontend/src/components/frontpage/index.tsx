@@ -5,7 +5,6 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import TextInput from '../ui/input/text-input';
 import Layout from '../ui/layout';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 import * as api from '../../services/api';
@@ -29,11 +28,11 @@ const SubmitButton = styled.button`
     font-size: 2rem;
     height: 3.5rem;
     margin: 1rem 0rem;
-    border: 1px solid ${({ disabled }) => (disabled ? 'gray' : '#60C197')};
+    border: 1px solid ${({ disabled }) => (disabled ? 'gray' : '#29BF12')};
 
     border-radius: 0.1rem;
 
-    background-color: ${({ disabled }) => (disabled ? 'gray' : '#60C197')};
+    background-color: ${({ disabled }) => (disabled ? 'gray' : '#29BF12')};
 
     cursor: ${({ disabled }) => (disabled ? 'initial' : 'pointer')};
     &:active {
@@ -68,13 +67,30 @@ const RadioButtonsContainer = styled.div`
     margin-top: 1rem;
 `;
 
+const FilesWrapper = styled.div``;
+
 const FilesContainer = styled.div`
     max-height: 30rem;
+    overflow-y: scroll;
+    border: 1px solid lightgray;
+    padding: 0rem 0.25rem;
+`;
+
+interface SpinnerWrapperProps {
+    hidden?: boolean;
+}
+
+const SpinnerWrapper = styled.div<SpinnerWrapperProps>`
+    display: ${(props) => (props.hidden ? 'none' : 'flex')};
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
 `;
 
 const FileItem = styled.div`
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     gap: 1rem;
     box-shadow: 0px 2px #e2e2e2;
 `;
@@ -89,14 +105,25 @@ const Status = styled.div`
     margin-right: 0.5rem;
 `;
 
-const Remove = styled.button`
+const Button = styled.button`
     color: white;
-    background: red;
     border: none;
     font-weight: bold;
+    border-radius: 0.1rem;
+
+    :active {
+        transform: translateY(2px);
+    }
+`;
+
+const RemoveOneButton = styled(Button)`
+    background: #ff0a1f;
     border-radius: 50%;
     width: 1.5rem;
     aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 const FormGroup = styled(Form.Group)`
@@ -107,25 +134,24 @@ const FormControl = styled(Form.Control)`
     display: none;
 `;
 
-const LargeButton = styled(Button)`
-    width: 20rem;
-`;
-
 const SelectedFilesTitle = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 `;
 
-const RemoveAllButton = styled.button`
-    border: none;
-    color: white;
-    background: red;
-    font-weight: bold;
+const RemoveAllButton = styled(Button)`
+    background: #ff0a1f;
+    margin-bottom: 0.5rem;
+    height: 2rem;
+`;
 
-    :active {
-        transform: translateY(2px);
-    }
+const UploadFilesButton = styled(Button)`
+    background: #2d7ff0;
+    height: 3.5rem;
+    width: 100%;
+    font-size: 2rem;
+    font-weight: normal;
 `;
 
 const WelcomeTextContainer = styled.div``;
@@ -302,6 +328,11 @@ class FrontPage extends React.Component<Props, State> {
         this.setState({ selectedFiles: [], selectedAudioFiles: [] });
     };
 
+    onSelectFilesClicked = (e: any) => {
+        e.preventDefault();
+        document.getElementById('formFileMultiple')?.click();
+    };
+
     render() {
         const { processing, audioType, selectedFiles } = this.state;
         return (
@@ -339,25 +370,13 @@ class FrontPage extends React.Component<Props, State> {
                                 onChange={this.onFileChange}
                                 multiple
                             />
-                            <div className="d-grid">
-                                <Button
-                                    variant={
-                                        selectedFiles.length > 0
-                                            ? 'success'
-                                            : 'primary'
-                                    }
-                                    size="lg"
-                                    onClick={() =>
-                                        document
-                                            .getElementById('formFileMultiple')
-                                            ?.click()
-                                    }
-                                >
-                                    {selectedFiles.length > 0
-                                        ? 'Velja fleiri skrár'
-                                        : 'Velja skrár'}
-                                </Button>
-                            </div>
+                            <UploadFilesButton
+                                onClick={this.onSelectFilesClicked}
+                            >
+                                {selectedFiles.length > 0
+                                    ? 'Velja fleiri skrár'
+                                    : 'Velja skrár'}
+                            </UploadFilesButton>
                         </FormGroup>
                         {/* might be useful for if people upload all the
                                 data as an archive
@@ -370,13 +389,58 @@ class FrontPage extends React.Component<Props, State> {
                               />
                             </Form.Group>
                             */}
-                        <Spinner
-                            animation={'border'}
-                            role={'status'}
-                            hidden={!processing}
-                        >
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
+                        <FilesWrapper>
+                            {selectedFiles && selectedFiles.length > 0 && (
+                                <SelectedFilesTitle>
+                                    <h3>
+                                        Valdar skrár ({selectedFiles.length})
+                                    </h3>
+                                    <RemoveAllButton
+                                        onClick={this.clearAllSelectedFiles}
+                                    >
+                                        Fjarlægja allar skrár
+                                    </RemoveAllButton>
+                                </SelectedFilesTitle>
+                            )}
+                            {selectedFiles.length > 0 && (
+                                <FilesContainer>
+                                    {Array.from(selectedFiles).map(
+                                        (file, index) => {
+                                            return (
+                                                <FileItem key={file.name}>
+                                                    <Name>{`${index + 1} - ${
+                                                        file.name
+                                                    }`}</Name>
+                                                    <Status>
+                                                        <RemoveOneButton
+                                                            onClick={() =>
+                                                                this.removeFileClicked(
+                                                                    file.name
+                                                                )
+                                                            }
+                                                            title={'Fjarlægja'}
+                                                        >
+                                                            X
+                                                        </RemoveOneButton>
+                                                    </Status>
+                                                </FileItem>
+                                            );
+                                        }
+                                    )}
+                                </FilesContainer>
+                            )}
+                        </FilesWrapper>
+                        <SpinnerWrapper hidden={!processing}>
+                            <Spinner
+                                animation={'border'}
+                                role={'status'}
+                                hidden={!processing}
+                            >
+                                <span className="visually-hidden">
+                                    Loading...
+                                </span>
+                            </Spinner>
+                        </SpinnerWrapper>
                         <SubmitButton
                             type="submit"
                             disabled={this.submitDisabled()}
@@ -384,40 +448,6 @@ class FrontPage extends React.Component<Props, State> {
                             Hlaða upp
                         </SubmitButton>
                     </Form>
-                    <FilesContainer>
-                        {selectedFiles && selectedFiles.length > 0 && (
-                            <SelectedFilesTitle>
-                                <h3>Valdar skrár ({selectedFiles.length})</h3>
-                                <Button
-                                    variant="danger"
-                                    onClick={this.clearAllSelectedFiles}
-                                >
-                                    Fjarlægja allar skrár
-                                </Button>
-                            </SelectedFilesTitle>
-                        )}
-                        {selectedFiles &&
-                            Array.from(selectedFiles).map((file) => {
-                                return (
-                                    <FileItem key={file.name}>
-                                        <Status>
-                                            <Button
-                                                variant="danger"
-                                                onClick={() =>
-                                                    this.removeFileClicked(
-                                                        file.name
-                                                    )
-                                                }
-                                                title={'Fjarlægja'}
-                                            >
-                                                X
-                                            </Button>
-                                        </Status>
-                                        <Name>{file.name}</Name>
-                                    </FileItem>
-                                );
-                            })}
-                    </FilesContainer>
                 </FrontPageContainer>
             </Layout>
         );
