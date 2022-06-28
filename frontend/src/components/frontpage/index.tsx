@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 
 import * as api from '../../services/api';
+import { AudioSelection, AudioType } from './audio_selection';
 
 const FrontPageContainer = styled.div`
     display: flex;
@@ -27,11 +28,11 @@ const SubmitButton = styled.button`
     font-size: 2rem;
     height: 3.5rem;
     margin: 1rem 0rem;
-    border: 1px solid ${({ disabled }) => (disabled ? 'gray' : '#60C197')};
+    border: 1px solid ${({ disabled }) => (disabled ? 'gray' : '#29BF12')};
 
     border-radius: 0.1rem;
 
-    background-color: ${({ disabled }) => (disabled ? 'gray' : '#60C197')};
+    background-color: ${({ disabled }) => (disabled ? 'gray' : '#29BF12')};
 
     cursor: ${({ disabled }) => (disabled ? 'initial' : 'pointer')};
     &:active {
@@ -48,28 +49,94 @@ const SubmitButton = styled.button`
     }
 `;
 
-const UploadTypeText = styled.p`
-    margin: 0;
-`;
-
-const RadioLabel = styled.label`
-    margin-left: 0.5rem;
-`;
-
 const NameInput = styled(TextInput)``;
 
-const UrlInput = styled(TextInput)`
-    margin: 1rem 0rem;
+const FilesWrapper = styled.div``;
+
+const FilesContainer = styled.div`
+    max-height: 30rem;
+    overflow-y: scroll;
+    border: 1px solid lightgray;
+    padding: 0rem 0.25rem;
 `;
 
-const RadioButtonsContainer = styled.div`
+interface SpinnerWrapperProps {
+    hidden?: boolean;
+}
+
+const SpinnerWrapper = styled.div<SpinnerWrapperProps>`
+    display: ${(props) => (props.hidden ? 'none' : 'flex')};
+    align-items: center;
+    justify-content: center;
     margin-top: 1rem;
 `;
 
-enum AudioType {
-    RSS = 'rss',
-    AUDIO_FILES = 'audio_files',
-}
+const FileItem = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0px 2px #e2e2e2;
+`;
+
+const Name = styled.div`
+    padding: 0.5rem 0 0.5rem 0;
+`;
+
+const Status = styled.div`
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 0.5rem;
+`;
+
+const Button = styled.button`
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 0.1rem;
+
+    :active {
+        transform: translateY(2px);
+    }
+`;
+
+const RemoveOneButton = styled(Button)`
+    background: #ff0a1f;
+    border-radius: 50%;
+    width: 1.5rem;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const FormGroup = styled(Form.Group)`
+    margin-top: 1.5rem;
+`;
+
+const FormControl = styled(Form.Control)`
+    display: none;
+`;
+
+const SelectedFilesTitle = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+`;
+
+const RemoveAllButton = styled(Button)`
+    background: #ff0a1f;
+    margin-bottom: 0.5rem;
+    height: 2rem;
+`;
+
+const UploadFilesButton = styled(Button)`
+    background: #2d7ff0;
+    height: 3.5rem;
+    width: 100%;
+    font-size: 2rem;
+    font-weight: normal;
+`;
 
 const WelcomeTextContainer = styled.div``;
 
@@ -81,7 +148,7 @@ interface State {
     selectedFiles: File[];
     selectedAudioFiles: File[];
     processing: boolean;
-    audioFiles: boolean;
+    audioType: AudioType;
 }
 
 class FrontPage extends React.Component<Props, State> {
@@ -99,7 +166,7 @@ class FrontPage extends React.Component<Props, State> {
             selectedFiles: [],
             selectedAudioFiles: [],
             processing: false,
-            audioFiles: false,
+            audioType: AudioType.NONE,
         };
     }
 
@@ -122,10 +189,23 @@ class FrontPage extends React.Component<Props, State> {
     // Thank you https://www.geeksforgeeks.org/file-uploading-in-react-js/
     // for the filechange function
     onFileChange = (event: any) => {
-        this.setState({ selectedFiles: event.target.files });
+        const { selectedFiles } = this.state;
+        for (const file of event.target.files) {
+            if (selectedFiles.some((e) => e.name == file.name)) continue;
+            selectedFiles.push(file);
+        }
+        // TODO: Sort by name
+        selectedFiles.sort((a, b) => a.name.localeCompare(b.name));
+        this.setState({ selectedFiles });
     };
 
     onAudioFileChange = (event: any) => {
+        const { selectedAudioFiles } = this.state;
+        for (const file of event.target.files) {
+            if (selectedAudioFiles.some((e) => e.name == file.name)) continue;
+            selectedAudioFiles.push(file);
+        }
+        selectedAudioFiles.sort((a, b) => a.name.localeCompare(b.name));
         this.setState({ selectedAudioFiles: event.target.files });
     };
 
@@ -151,7 +231,7 @@ class FrontPage extends React.Component<Props, State> {
     };
 
     onFileUpload = async (e: React.FormEvent<HTMLFormElement>) => {
-        const { audioFiles, selectedFiles, selectedAudioFiles } = this.state;
+        const { audioType, selectedFiles, selectedAudioFiles } = this.state;
         let processing = true;
         this.setState({ processing });
         e.preventDefault();
@@ -161,7 +241,8 @@ class FrontPage extends React.Component<Props, State> {
 
         await this.uploadFiles(selectedFiles);
 
-        if (audioFiles) {
+        // Hide audiotype for now
+        if (audioType == AudioType.AUDIO_FILES) {
             await this.uploadFiles(selectedAudioFiles);
         }
         // TODO: else say there was nothing to submit or it errored out
@@ -185,15 +266,8 @@ class FrontPage extends React.Component<Props, State> {
         }
     };
 
-    handleRadioButton = (value: string) => {
-        if (value == AudioType.RSS) {
-            this.setState({ audioFiles: false });
-            return;
-        }
-        if (value == AudioType.AUDIO_FILES) {
-            this.setState({ audioFiles: true });
-            return;
-        }
+    onAudioTypeChanged = (value: AudioType) => {
+        this.setState({ audioType: value });
     };
 
     submitDisabled = () => {
@@ -203,7 +277,7 @@ class FrontPage extends React.Component<Props, State> {
             selectedFiles,
             selectedAudioFiles,
             processing,
-            audioFiles,
+            audioType,
         } = this.state;
 
         // Require podcast type
@@ -217,15 +291,34 @@ class FrontPage extends React.Component<Props, State> {
 
         // If uploading audio files, require audio files
         // ELSE requires a value in the rss feed
-        if (audioFiles) {
-            if (selectedAudioFiles.length === 0) return true;
-        } else {
-            if (!rssFeed) return true;
-        }
+        if (
+            audioType == AudioType.AUDIO_FILES &&
+            selectedAudioFiles.length == 0
+        )
+            return true;
+
+        if (audioType == AudioType.RSS && !rssFeed) return true;
+    };
+
+    removeFileClicked = (filename: string) => {
+        const { selectedFiles } = this.state;
+
+        const filteredFiles = selectedFiles.filter((e) => e.name != filename);
+
+        this.setState({ selectedFiles: filteredFiles });
+    };
+
+    clearAllSelectedFiles = () => {
+        this.setState({ selectedFiles: [], selectedAudioFiles: [] });
+    };
+
+    onSelectFilesClicked = (e: any) => {
+        e.preventDefault();
+        document.getElementById('formFileMultiple')?.click();
     };
 
     render() {
-        const { processing, audioFiles } = this.state;
+        const { processing, audioType, selectedFiles } = this.state;
         return (
             <Layout>
                 <FrontPageContainer>
@@ -241,66 +334,14 @@ class FrontPage extends React.Component<Props, State> {
                             onChange={this.onPodcastChange}
                             disabled
                         />
-                        <RadioButtonsContainer>
-                            <UploadTypeText>
-                                Veldu hvernig þú vilt gefa hljóðskrár. RSS
-                                hlekkur eða hlaðið upp hljóðskrár.
-                            </UploadTypeText>
-                            <input
-                                type="radio"
-                                id="rss"
-                                name="audio_type"
-                                value="rss"
-                                onChange={() =>
-                                    this.handleRadioButton(AudioType.RSS)
-                                }
-                                checked={!audioFiles}
-                            ></input>
-                            <RadioLabel htmlFor="rss">
-                                RSSFeed hlekkur
-                            </RadioLabel>
-                            <br />
-                            <input
-                                type="radio"
-                                id="audio_files"
-                                name="audio_type"
-                                value="audio_files"
-                                onChange={() =>
-                                    this.handleRadioButton(
-                                        AudioType.AUDIO_FILES
-                                    )
-                                }
-                            ></input>
-                            <RadioLabel htmlFor="audio_files">
-                                Hljóðskrár
-                            </RadioLabel>
-                        </RadioButtonsContainer>
-                        {audioFiles ? (
-                            <Form.Group
-                                controlId="formFileMultipleAudio"
-                                className="mb-3"
-                            >
-                                <Form.Label>
-                                    Veldu hljóðskrár til að hlaða upp
-                                    (hljóðskrár á sniði: .mp3, .mp4, .wav
-                                    o.s.frv.)
-                                </Form.Label>
-                                <Form.Control
-                                    type={'file'}
-                                    onChange={this.onAudioFileChange}
-                                    multiple
-                                />
-                            </Form.Group>
-                        ) : (
-                            <UrlInput
-                                label={'RSSFeed'}
-                                value={this.state.rssFeed}
-                                placeholder={'https://hlekkurinn.is'}
-                                onChange={this.onFeedChange}
+                        {audioType != AudioType.NONE && (
+                            <AudioSelection
+                                onFeedChange={this.onFeedChange}
+                                onAudioFilesChanged={this.onAudioFileChange}
+                                onAudioTypeChanged={this.onAudioTypeChanged}
                             />
                         )}
-
-                        <Form.Group
+                        <FormGroup
                             controlId="formFileMultiple"
                             className="mb-3"
                         >
@@ -308,12 +349,19 @@ class FrontPage extends React.Component<Props, State> {
                                 Veldu handrit til að hlaða upp (textaskrár á
                                 sniði: .txt, .ppt, .rtf, .docx o.s.frv.)
                             </Form.Label>
-                            <Form.Control
+                            <FormControl
                                 type={'file'}
                                 onChange={this.onFileChange}
                                 multiple
                             />
-                        </Form.Group>
+                            <UploadFilesButton
+                                onClick={this.onSelectFilesClicked}
+                            >
+                                {selectedFiles.length > 0
+                                    ? 'Velja fleiri skrár'
+                                    : 'Velja skrár'}
+                            </UploadFilesButton>
+                        </FormGroup>
                         {/* might be useful for if people upload all the
                                 data as an archive
                             <Form.Group controlId="formFileLg" className="mb-3">
@@ -325,13 +373,58 @@ class FrontPage extends React.Component<Props, State> {
                               />
                             </Form.Group>
                             */}
-                        <Spinner
-                            animation={'border'}
-                            role={'status'}
-                            hidden={!processing}
-                        >
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
+                        <FilesWrapper>
+                            {selectedFiles && selectedFiles.length > 0 && (
+                                <SelectedFilesTitle>
+                                    <h3>
+                                        Valdar skrár ({selectedFiles.length})
+                                    </h3>
+                                    <RemoveAllButton
+                                        onClick={this.clearAllSelectedFiles}
+                                    >
+                                        Fjarlægja allar skrár
+                                    </RemoveAllButton>
+                                </SelectedFilesTitle>
+                            )}
+                            {selectedFiles.length > 0 && (
+                                <FilesContainer>
+                                    {Array.from(selectedFiles).map(
+                                        (file, index) => {
+                                            return (
+                                                <FileItem key={file.name}>
+                                                    <Name>{`${index + 1} - ${
+                                                        file.name
+                                                    }`}</Name>
+                                                    <Status>
+                                                        <RemoveOneButton
+                                                            onClick={() =>
+                                                                this.removeFileClicked(
+                                                                    file.name
+                                                                )
+                                                            }
+                                                            title={'Fjarlægja'}
+                                                        >
+                                                            X
+                                                        </RemoveOneButton>
+                                                    </Status>
+                                                </FileItem>
+                                            );
+                                        }
+                                    )}
+                                </FilesContainer>
+                            )}
+                        </FilesWrapper>
+                        <SpinnerWrapper hidden={!processing}>
+                            <Spinner
+                                animation={'border'}
+                                role={'status'}
+                                hidden={!processing}
+                            >
+                                <span className="visually-hidden">
+                                    Loading...
+                                </span>
+                            </Spinner>
+                        </SpinnerWrapper>
                         <SubmitButton
                             type="submit"
                             disabled={this.submitDisabled()}
