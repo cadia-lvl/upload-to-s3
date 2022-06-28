@@ -49,23 +49,7 @@ const SubmitButton = styled.button`
     }
 `;
 
-const UploadTypeText = styled.p`
-    margin: 0;
-`;
-
-const RadioLabel = styled.label`
-    margin-left: 0.5rem;
-`;
-
 const NameInput = styled(TextInput)``;
-
-const UrlInput = styled(TextInput)`
-    margin: 1rem 0rem;
-`;
-
-const RadioButtonsContainer = styled.div`
-    margin-top: 1rem;
-`;
 
 const FilesWrapper = styled.div``;
 
