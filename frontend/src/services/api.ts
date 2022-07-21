@@ -5,7 +5,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 export const uploadFile = async (
     file: File,
     show: string,
-    rssFeed: string,
+    rssFeed: string
     // clip: AudioInfo,
     // demographics: UserDemographics
 ): Promise<void> => {
@@ -59,4 +59,4 @@ const getApiUrl = (apiPath: string = 'api') => {
         pathname = pathname.replace('3000', '9090');
     }
     return `${pathname}/${apiPath}`;
-}
+};

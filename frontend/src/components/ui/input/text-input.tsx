@@ -99,9 +99,8 @@ class TextInput extends React.Component<Props, State> {
                     <TextInputContainer
                         ref={this.ref}
                         onFocus={this.onFocus}
-                        {...(this.props as React.InputHTMLAttributes<
-                            HTMLInputElement
-                        >)}
+                        {...(this
+                            .props as React.InputHTMLAttributes<HTMLInputElement>)}
                     />
                 </Padding>
             </InputContainer>

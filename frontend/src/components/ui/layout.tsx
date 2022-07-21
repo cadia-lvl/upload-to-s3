@@ -44,9 +44,7 @@ export const Layout: React.FunctionComponent<Props> = ({ children }) => {
             <Padding>
                 <Header>
                     <Title>
-                        <StyledLink href="/">
-                            Podrómur
-                        </StyledLink>
+                        <StyledLink href="/">Podrómur</StyledLink>
                     </Title>
                 </Header>
                 {children}
